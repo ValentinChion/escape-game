@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Énigme Escape Game</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .question-box {
+      display: inline-block;
+      background-color: white;
+      color: black;
+      border: 3px solid #00ff00;
+      padding: 20px;
+      font-weight: bold;
+      box-shadow: 0 0 20px #00ff00;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      background: black;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #00ff00;
+      color: black;
+    }
+
+    img {
+      margin-top: 30px;
+      max-width: 800px;
+      width: 100%;
+      border: 2px solid #00ff00;
+      box-shadow: 0 0 15px #00ff00;
+    }
+
+    audio {
+      margin-top: 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+
+  <div class="content">
+    <h1>Décrypte l'énigme</h1>
+
+    <div class="question-box">
+      Retrouve le nom de ce lieu. Il s'agit probablement du quartier généraldu groupe terroriste. Pour information, tout est disponible sur cetter page, et google maps est ton ami... ?
+    </div>
+
+    <br />
+    <input type="text" id="answer" placeholder="Ta réponse ici..." />
+    <br />
+    <button onclick="checkAnswer()">Valider</button>
+
+    <br />
+    <img src="image.jpg" alt="Indice visuel" />
+
+    <audio controls loop>
+      <source src="cirque.mp3" type="audio/mpeg" />
+      Ton navigateur ne supporte pas l'audio.
+    </audio>
+  </div>
+
+  <script>
+    function checkAnswer() {
+      const input = document.getElementById('answer').value.trim().toLowerCase();
+      const correctAnswer = "amaan stadium";
+
+      if (input === correctAnswer) {
+        window.open("secret.pdf", "_blank");
+      } else {
+        alert("Mauvaise réponse !");
+      }
+    }
+
+    // Effet Matrix
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "アァイィウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const matrix = letters.split("");
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = new Array(columns).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = matrix[Math.floor(Math.random() * matrix.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 33);
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
